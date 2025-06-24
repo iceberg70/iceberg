@@ -1,0 +1,949 @@
+import React, { useState } from 'react';
+
+// Main App component for the event plan
+const App = () => {
+  // Initial state for event items, including budget, actual costs, and responsibilities
+  const [items, setItems] = useState([
+    // Part 1: Site Visit and Coffee Break
+    {
+      id: 'p1-1',
+      part: 'ช่วงที่ 1',
+      task: 'จัดเตรียมเบรกสำหรับช่วงเช้า (13:00 น.)',
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'part1',
+      minQuantity: 0,
+      pricePerUnit: 0,
+    },
+    {
+      id: 'p1-2',
+      part: 'ช่วงที่ 1',
+      task: 'การพาชมสถานที่ (แบ่ง 3 กลุ่ม)',
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'ทีม ฝอ.3',
+      notes: '',
+      type: 'part1',
+      minQuantity: 0,
+      pricePerUnit: 0,
+    },
+    // Part 2: Dinner & Party - Venue & Setup
+    {
+      id: 'p2-venue-1',
+      part: 'ช่วงที่ 2',
+      task: 'จัดโต๊ะ + แม่บ้าน',
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'venue',
+    },
+    {
+      id: 'p2-venue-2',
+      part: 'ช่วงที่ 2',
+      task: 'จ้างเวที',
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'venue',
+    },
+    {
+      id: 'p2-venue-3',
+      part: 'ช่วงที่ 2',
+      task: 'แสงสีเสียง',
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'venue',
+    },
+    {
+      id: 'p2-venue-4',
+      part: 'ช่วงที่ 2',
+      task: 'วงดนตรี',
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'venue',
+    },
+    // Part 2: Dinner & Party - Food & Beverage
+    {
+      id: 'p2-2',
+      part: 'ช่วงที่ 2',
+      task: 'ค่าอาหารบุฟเฟต์',
+      minQuantity: 200,
+      pricePerUnit: 180,
+      budgetedPrice: 200 * 180, // Calculated
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'food-main',
+    },
+    {
+      id: 'p2-3',
+      part: 'ช่วงที่ 2',
+      task: 'บาร์น้ำ (น้ำแข็ง, มิกเซอร์, น้ำอัดลม)',
+      minQuantity: 300, // Based on description
+      pricePerUnit: 5000 / 300, // Based on description
+      budgetedPrice: 5000,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'food-main',
+    },
+    // Part 2: Dinner & Party - Stalls
+    {
+      id: 'p2-4',
+      part: 'ช่วงที่ 2',
+      task: 'ก๋วยเตี๋ยว',
+      minQuantity: 200,
+      pricePerUnit: 0, // N/A, user to fill
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'stall',
+    },
+    {
+      id: 'p2-5',
+      part: 'ช่วงที่ 2',
+      task: 'ส้มตำ ไก่ย่าง น้ำตก ข้าวเหนียว',
+      minQuantity: 200,
+      pricePerUnit: 0, // N/A, user to fill
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'stall',
+    },
+    {
+      id: 'p2-6',
+      part: 'ช่วงที่ 2',
+      task: 'ผัดไทย หอยทอด',
+      minQuantity: 200,
+      pricePerUnit: 0, // Minimum 14,000, so price per unit would be 70
+      budgetedPrice: 14000,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'stall',
+    },
+    {
+      id: 'p2-7',
+      part: 'ช่วงที่ 2',
+      task: 'ลูกชิ้นปิ้ง',
+      minQuantity: 700,
+      pricePerUnit: 0, // N/A, user to fill
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'stall',
+    },
+    // Part 2: Post-Event Food
+    {
+      id: 'p2-8',
+      part: 'ช่วงที่ 2',
+      task: 'ข้าวต้มปลาหลังงานเลิก',
+      minQuantity: 100,
+      pricePerUnit: 0, // N/A, user to fill
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'post-event',
+    },
+    // Ceremony Details (separate section, now with explicit types)
+    {
+      id: 'ceremony-1',
+      part: 'พิธีการและกิจกรรม',
+      task: 'พิธีกร',
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'ceremony-item',
+    },
+    {
+      id: 'ceremony-2',
+      part: 'พิธีการและกิจกรรม',
+      task: 'กิจกรรมภายในงาน', // Clean task name
+      budgetedPrice: 0,
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: 'เช่น การแสดงดนตรี, เกมชิงรางวัล, การฉาย VTR', // Detailed activities
+      type: 'ceremony-item',
+    },
+    // Other Sponsors (now as individual items)
+    {
+      id: 'sponsor-1',
+      part: 'ผู้สนับสนุนอื่นๆ',
+      sponsorName: 'ชื่อผู้สนับสนุน 1',
+      supportType: '', // New field for what is supported
+      actualPrice: 0,
+      responsiblePerson: 'รอการกำหนด',
+      notes: '',
+      type: 'sponsor',
+    },
+  ]);
+
+  // Handle changes in input fields
+  const handleChange = (id, field, value) => {
+    setItems((prevItems) =>
+      prevItems.map((item) => {
+        if (item.id === id) {
+          const newItem = { ...item };
+          if (field === 'minQuantity' || field === 'pricePerUnit') {
+            newItem[field] = parseFloat(value) || 0;
+            // Only re-calculate budgetedPrice automatically for specific items
+            if (newItem.id === 'p2-2') { // Buffet
+              newItem.budgetedPrice = newItem.minQuantity * newItem.pricePerUnit;
+            } else if (newItem.id === 'p2-3') { // Bar water, if calculated by unit
+                // For bar, it's 5000 per 300 heads, so pricePerUnit calculation is tricky.
+                // Keeping budgetedPrice for bar as fixed 5000 initially, user can change.
+            }
+          } else if (field === 'budgetedPrice' || field === 'actualPrice') {
+            newItem[field] = parseFloat(value) || 0;
+          } else {
+            newItem[field] = value;
+          }
+          return newItem;
+        }
+        return item;
+      })
+    );
+  };
+
+  // Add new stall item
+  const addStallItem = () => {
+    const newId = `p2-stall-${Date.now()}`; // Unique ID
+    setItems((prevItems) => [
+      ...prevItems,
+      {
+        id: newId,
+        part: 'ช่วงที่ 2',
+        task: 'รายการออกร้านใหม่',
+        budgetedPrice: 0,
+        actualPrice: 0,
+        responsiblePerson: 'รอการกำหนด',
+        notes: '',
+        type: 'stall',
+        minQuantity: 0,
+        pricePerUnit: 0,
+      },
+    ]);
+  };
+
+  // Add new ceremony item
+  const addCeremonyItem = () => {
+    const newId = `ceremony-${Date.now()}`;
+    setItems((prevItems) => [
+      ...prevItems,
+      {
+        id: newId,
+        part: 'พิธีการและกิจกรรม',
+        task: 'กิจกรรมใหม่',
+        budgetedPrice: 0,
+        actualPrice: 0,
+        responsiblePerson: 'รอการกำหนด',
+        notes: '',
+        type: 'ceremony-item',
+      },
+    ]);
+  };
+
+  // Add new sponsor item
+  const addSponsorItem = () => {
+    const newId = `sponsor-${Date.now()}`; // Unique ID
+    setItems((prevItems) => [
+      ...prevItems,
+      {
+        id: newId,
+        part: 'ผู้สนับสนุนอื่นๆ',
+        sponsorName: 'ผู้สนับสนุนใหม่',
+        supportType: '', // New field for what is supported
+        actualPrice: 0,
+        responsiblePerson: 'รอการกำหนด',
+        notes: '',
+        type: 'sponsor',
+      },
+    ]);
+  };
+
+  // Delete an item
+  const deleteItem = (id) => {
+    setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
+
+
+  // Filter items for Part 1
+  const part1Items = items.filter((item) => item.type === 'part1');
+  // Filter items for Part 2 (excluding sponsors, as per instructions)
+  const part2Items = items.filter((item) => item.part === 'ช่วงที่ 2');
+  // Filter items for Ceremony and Activities
+  const ceremonyItems = items.filter((item) => item.type === 'ceremony-item');
+  // Filter items for Other Sponsors
+  const sponsorItems = items.filter((item) => item.type === 'sponsor'); // Filter by type 'sponsor'
+
+  // Calculate total budgeted and actual costs for Part 1
+  const totalPart1Budgeted = part1Items.reduce((sum, item) => sum + item.budgetedPrice, 0);
+  const totalPart1Actual = part1Items.reduce((sum, item) => sum + item.actualPrice, 0);
+
+  // Calculate total budgeted and actual costs for Part 2 (only items that contribute to the budget)
+  const totalPart2Budgeted = part2Items.reduce((sum, item) => sum + item.budgetedPrice, 0);
+  const totalPart2Actual = part2Items.reduce((sum, item) => sum + item.actualPrice, 0);
+
+  // Define the overall budget for Part 2
+  const overallPart2Budget = 120000;
+
+  // Calculate remaining budget for Part 2
+  const part2RemainingBudget = overallPart2Budget - totalPart2Actual;
+
+  // Helper to calculate subtotals for specific types within Part 2
+  const calculateSubtotal = (type, field) => {
+    return part2Items
+      .filter((item) => item.type === type)
+      .reduce((sum, item) => sum + item[field], 0);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-4 font-inter">
+      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          แผนการจัดงานวันที่ 4 กรกฎาคม 2568
+        </h1>
+
+        <div className="mb-8">
+          <p className="text-lg text-gray-700">
+            <span className="font-semibold">วันที่:</span> วันศุกร์ที่ 4 กรกฎาคม 2568
+          </p>
+          <p className="text-lg text-gray-700">
+            <span className="font-semibold">จำนวนแขก:</span> ประมาณ 150 คน (อาจลดลงเหลือ 120 คน)
+          </p>
+          <p className="text-lg text-gray-700">
+            <span className="font-semibold">งบประมาณรวมสำหรับช่วงที่ 2:</span> {overallPart2Budget.toLocaleString()} บาท
+          </p>
+          <p className="text-lg text-red-600 font-bold">
+            <span className="font-semibold">ยอดคงเหลือสำหรับช่วงที่ 2:</span>{' '}
+            {part2RemainingBudget.toLocaleString()} บาท{' '}
+            {part2RemainingBudget < 0 ? '(เกินงบ)' : '(อยู่ในงบ)'}
+          </p>
+        </div>
+
+        {/* Part 1 Table */}
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 mt-8">
+          ช่วงที่ 1: การดูงานและพาชมสถานที่ (13:00 - 17:00 น.)
+        </h2>
+        <div className="overflow-x-auto mb-8">
+          <table className="min-w-full bg-white rounded-lg shadow-md table-fixed">
+            <thead className="bg-blue-600 text-white">
+              <tr>
+                <th className="py-3 px-4 text-left w-[20%] rounded-tl-lg">สิ่งที่ต้องทำ</th>
+                <th className="py-3 px-4 text-left w-[10%]">ขั้นต่ำ / จำนวน</th>
+                <th className="py-3 px-4 text-left w-[10%]">ราคาต่อหน่วย</th>
+                <th className="py-3 px-4 text-left w-[15%]">ราคาที่ตั้งไว้ (บาท)</th>
+                <th className="py-3 px-4 text-left w-[15%]">ราคาที่จ่ายจริง (บาท)</th>
+                <th className="py-3 px-4 text-left w-[15%]">ผู้รับผิดชอบ</th>
+                <th className="py-3 px-4 text-left w-[15%] rounded-tr-lg">หมายเหตุ</th>
+              </tr>
+            </thead><tbody>
+              {part1Items.map((item, index) => (
+                <tr
+                  key={item.id}
+                  className={`${
+                    index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+                  } border-b border-gray-200 hover:bg-gray-100`}
+                >
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <textarea
+                      value={item.task}
+                      onChange={(e) => handleChange(item.id, 'task', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                      rows="2"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.minQuantity}
+                      onChange={(e) => handleChange(item.id, 'minQuantity', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.pricePerUnit}
+                      onChange={(e) => handleChange(item.id, 'pricePerUnit', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.budgetedPrice}
+                      onChange={(e) => handleChange(item.id, 'budgetedPrice', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.actualPrice}
+                      onChange={(e) => handleChange(item.id, 'actualPrice', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <input
+                      type="text"
+                      value={item.responsiblePerson}
+                      onChange={(e) => handleChange(item.id, 'responsiblePerson', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <textarea
+                      value={item.notes}
+                      onChange={(e) => handleChange(item.id, 'notes', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                      rows="2"
+                    />
+                  </td>
+                </tr>
+              ))}
+              <tr className="bg-blue-100 font-semibold">
+                <td colSpan="3" className="py-3 px-4 text-right">รวมงบประมาณสำหรับช่วงที่ 1:</td>
+                <td className="py-3 px-4">
+                  {totalPart1Budgeted.toLocaleString()}
+                </td>
+                <td className="py-3 px-4">
+                  {totalPart1Actual.toLocaleString()}
+                </td>
+                <td colSpan="2" className="py-3 px-4"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Part 2 Table */}
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 mt-8">
+          ช่วงที่ 2: การจัดเลี้ยงอาหารเย็นและปาร์ตี้ (17:00 - 22:00 น.)
+        </h2>
+        <div className="overflow-x-auto mb-8">
+          <table className="min-w-full bg-white rounded-lg shadow-md table-fixed">
+            <thead className="bg-blue-600 text-white">
+              <tr>
+                <th className="py-3 px-4 text-left w-[20%] rounded-tl-lg">สิ่งที่ต้องทำ</th>
+                <th className="py-3 px-4 text-left w-[10%]">ขั้นต่ำ / จำนวน</th>
+                <th className="py-3 px-4 text-left w-[10%]">ราคาต่อหน่วย</th>
+                <th className="py-3 px-4 text-left w-[15%]">ราคาที่ตั้งไว้ (บาท)</th>
+                <th className="py-3 px-4 text-left w-[15%]">ราคาที่จ่ายจริง (บาท)</th>
+                <th className="py-3 px-4 text-left w-[15%]">ผู้รับผิดชอบ</th>
+                <th className="py-3 px-4 text-left w-[15%] rounded-tr-lg">หมายเหตุ</th>
+              </tr>
+            </thead><tbody>
+              {/* Venue Management Section */}
+              <tr className="bg-gray-200 font-semibold">
+                <td colSpan="7" className="py-2 px-4 text-left">
+                  การจัดการสถานที่
+                  <span className="ml-4 text-sm font-normal">
+                    (ตั้งไว้รวม: {calculateSubtotal('venue', 'budgetedPrice').toLocaleString()} บาท /
+                    จ่ายจริงรวม: {calculateSubtotal('venue', 'actualPrice').toLocaleString()} บาท)
+                  </span>
+                </td>
+              </tr>
+              {part2Items.filter(item => item.type === 'venue').map((item, index) => (
+                <tr
+                  key={item.id}
+                  className={`${
+                    index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+                  } border-b border-gray-200 hover:bg-gray-100`}
+                >
+                  <td className="py-3 px-4 pl-8 whitespace-normal break-words">
+                    <textarea
+                      value={item.task}
+                      onChange={(e) => handleChange(item.id, 'task', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                      rows="2"
+                    />
+                  </td>
+                  {/* These columns are not applicable for Venue Management, display N/A */}
+                  <td className="py-3 px-4 text-gray-500">N/A</td>
+                  <td className="py-3 px-4 text-gray-500">N/A</td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.budgetedPrice}
+                      onChange={(e) => handleChange(item.id, 'budgetedPrice', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.actualPrice}
+                      onChange={(e) => handleChange(item.id, 'actualPrice', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <input
+                      type="text"
+                      value={item.responsiblePerson}
+                      onChange={(e) => handleChange(item.id, 'responsiblePerson', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <textarea
+                      value={item.notes}
+                      onChange={(e) => handleChange(item.id, 'notes', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                      rows="2"
+                    />
+                  </td>
+                </tr>
+              ))}
+
+              {/* Food & Beverage Section - Header with Totals */}
+              <tr className="bg-gray-200 font-semibold">
+                <td colSpan="7" className="py-2 px-4 text-left">
+                  อาหารและเครื่องดื่ม
+                  <span className="ml-4 text-sm font-normal">
+                    (ตั้งไว้รวม: {calculateSubtotal('food-main', 'budgetedPrice').toLocaleString()} บาท /
+                    จ่ายจริงรวม: {calculateSubtotal('food-main', 'actualPrice').toLocaleString()} บาท)
+                  </span>
+                </td>
+              </tr>
+              {part2Items.filter(item => item.type === 'food-main').map((item, index) => (
+                <tr
+                  key={item.id}
+                  className={`${
+                    index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+                  } border-b border-gray-200 hover:bg-gray-100`}
+                >
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <textarea
+                      value={item.task}
+                      onChange={(e) => handleChange(item.id, 'task', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                      rows="2"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.minQuantity}
+                      onChange={(e) => handleChange(item.id, 'minQuantity', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      disabled={item.id !== 'p2-2'} // Only editable for buffet (p2-2)
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.pricePerUnit}
+                      onChange={(e) => handleChange(item.id, 'pricePerUnit', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      disabled={item.id !== 'p2-2'} // Only editable for buffet (p2-2)
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.budgetedPrice}
+                      onChange={(e) => handleChange(item.id, 'budgetedPrice', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      disabled={item.id === 'p2-2'} // Disable for buffet as it's calculated
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.actualPrice}
+                      onChange={(e) => handleChange(item.id, 'actualPrice', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <input
+                      type="text"
+                      value={item.responsiblePerson}
+                      onChange={(e) => handleChange(item.id, 'responsiblePerson', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <textarea
+                      value={item.notes}
+                      onChange={(e) => handleChange(item.id, 'notes', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                      rows="2"
+                    />
+                  </td>
+                </tr>
+              ))}
+
+              {/* Stall Section */}
+              <tr className="bg-gray-200 font-semibold">
+                <td colSpan="7" className="py-2 px-4 text-left">
+                  ออกร้าน
+                  <span className="ml-4 text-sm font-normal">
+                    (ตั้งไว้รวม: {calculateSubtotal('stall', 'budgetedPrice').toLocaleString()} บาท /
+                    จ่ายจริงรวม: {calculateSubtotal('stall', 'actualPrice').toLocaleString()} บาท)
+                  </span>
+                </td>
+              </tr>
+              {part2Items.filter(item => item.type === 'stall').map((item, index) => (
+                <tr
+                  key={item.id}
+                  className={`${
+                    index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+                  } border-b border-gray-200 hover:bg-gray-100`}
+                >
+                  <td className="py-3 px-4 pl-8 whitespace-normal break-words">
+                    <textarea
+                      value={item.task}
+                      onChange={(e) => handleChange(item.id, 'task', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                      rows="2"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.minQuantity}
+                      onChange={(e) => handleChange(item.id, 'minQuantity', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.pricePerUnit}
+                      onChange={(e) => handleChange(item.id, 'pricePerUnit', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.budgetedPrice}
+                      onChange={(e) => handleChange(item.id, 'budgetedPrice', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.actualPrice}
+                      onChange={(e) => handleChange(item.id, 'actualPrice', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <input
+                      type="text"
+                      value={item.responsiblePerson}
+                      onChange={(e) => handleChange(item.id, 'responsiblePerson', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4 flex items-center space-x-2">
+                    <textarea
+                      value={item.notes}
+                      onChange={(e) => handleChange(item.id, 'notes', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                      rows="2"
+                    />
+                    <button
+                      onClick={() => deleteItem(item.id)}
+                      className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-colors shrink-0"
+                      title="ลบรายการ"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              <tr>
+                <td colSpan="7" className="py-3 px-4 text-center">
+                  <button
+                    onClick={addStallItem}
+                    className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition-colors"
+                  >
+                    + เพิ่มรายการออกร้าน
+                  </button>
+                </td>
+              </tr>
+
+              {/* Post-Event Food Section */}
+              <tr className="bg-gray-200 font-semibold">
+                <td colSpan="7" className="py-2 px-4 text-left">
+                  หลังงานเลิก
+                  <span className="ml-4 text-sm font-normal">
+                    (ตั้งไว้รวม: {calculateSubtotal('post-event', 'budgetedPrice').toLocaleString()} บาท /
+                    จ่ายจริงรวม: {calculateSubtotal('post-event', 'actualPrice').toLocaleString()} บาท)
+                  </span>
+                </td>
+              </tr>
+              {part2Items.filter(item => item.type === 'post-event').map((item, index) => (
+                <tr
+                  key={item.id}
+                  className={`${
+                    index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+                  } border-b border-gray-200 hover:bg-gray-100`}
+                >
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <textarea
+                      value={item.task}
+                      onChange={(e) => handleChange(item.id, 'task', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                      rows="2"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.minQuantity}
+                      onChange={(e) => handleChange(item.id, 'minQuantity', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.pricePerUnit}
+                      onChange={(e) => handleChange(item.id, 'pricePerUnit', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.budgetedPrice}
+                      onChange={(e) => handleChange(item.id, 'budgetedPrice', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4">
+                    <input
+                      type="number"
+                      value={item.actualPrice}
+                      onChange={(e) => handleChange(item.id, 'actualPrice', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <input
+                      type="text"
+                      value={item.responsiblePerson}
+                      onChange={(e) => handleChange(item.id, 'responsiblePerson', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </td>
+                  <td className="py-3 px-4 whitespace-normal break-words">
+                    <textarea
+                      value={item.notes}
+                      onChange={(e) => handleChange(item.id, 'notes', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                      rows="2"
+                    />
+                  </td>
+                </tr>
+              ))}
+
+              <tr className="bg-blue-600 text-white font-bold">
+                <td colSpan="3" className="py-3 px-4 text-right rounded-bl-lg">รวมงบประมาณทั้งหมดสำหรับช่วงที่ 2:</td>
+                <td className="py-3 px-4">
+                  {totalPart2Budgeted.toLocaleString()}
+                </td>
+                <td className="py-3 px-4">
+                  {totalPart2Actual.toLocaleString()}
+                </td>
+                <td colSpan="2" className="py-3 px-4 rounded-br-lg"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Section for Ceremony Details and Activities - Now a table */}
+        <div className="mt-8 p-6 bg-blue-50 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            รายละเอียดพิธีการและกิจกรรมในงาน
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white rounded-lg shadow-md table-fixed">
+              <thead className="bg-blue-600 text-white">
+                <tr>
+                  <th className="py-3 px-4 text-left w-[25%] rounded-tl-lg">กิจกรรม/สิ่งที่ต้องทำ</th>
+                  <th className="py-3 px-4 text-left w-[25%]">ผู้รับผิดชอบ</th>
+                  <th className="py-3 px-4 text-left w-[50%] rounded-tr-lg">หมายเหตุ/รายละเอียด</th>
+                </tr>
+              </thead><tbody>
+                {ceremonyItems.map((item, index) => (
+                  <tr
+                    key={item.id}
+                    className={`${
+                      index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+                    } border-b border-gray-200 hover:bg-gray-100`}
+                  >
+                    <td className="py-3 px-4 whitespace-normal break-words">
+                      <textarea
+                        value={item.task}
+                        onChange={(e) => handleChange(item.id, 'task', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                        rows="2"
+                      />
+                    </td>
+                    <td className="py-3 px-4 whitespace-normal break-words">
+                      <input
+                        type="text"
+                        value={item.responsiblePerson}
+                        onChange={(e) => handleChange(item.id, 'responsiblePerson', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </td>
+                    <td className="py-3 px-4 flex items-center space-x-2">
+                      <textarea
+                        value={item.notes}
+                        onChange={(e) => handleChange(item.id, 'notes', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                        rows="2"
+                        placeholder="รายละเอียดกิจกรรม"
+                      />
+                      <button
+                        onClick={() => deleteItem(item.id)}
+                        className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-colors shrink-0"
+                        title="ลบรายการ"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                <tr>
+                  <td colSpan="3" className="py-3 px-4 text-center">
+                    <button
+                      onClick={addCeremonyItem}
+                      className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition-colors"
+                    >
+                      + เพิ่มกิจกรรม
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+        {/* Section for Other Sponsors - Now a table */}
+        <div className="mt-8 p-6 bg-green-50 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            ผู้สนับสนุนอื่นๆ <span className="text-sm font-normal text-gray-600">(ค่าใช้จ่ายส่วนนี้ไม่รวมในงบประมาณรวมช่วงที่ 2)</span>
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white rounded-lg shadow-md table-fixed">
+              <thead className="bg-green-600 text-white">
+                <tr>
+                  <th className="py-3 px-4 text-left w-[20%] rounded-tl-lg">ชื่อผู้สนับสนุน</th>
+                  <th className="py-3 px-4 text-left w-[20%]">สิ่งที่สนับสนุน</th> {/* New column */}
+                  <th className="py-3 px-4 text-left w-[15%]">ราคาที่จ่ายจริง (บาท)</th>
+                  <th className="py-3 px-4 text-left w-[20%]">ผู้รับผิดชอบ</th>
+                  <th className="py-3 px-4 text-left w-[25%] rounded-tr-lg">หมายเหตุ</th>
+                </tr>
+              </thead><tbody>
+                {sponsorItems.map((item, index) => (
+                  <tr
+                    key={item.id}
+                    className={`${
+                      index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
+                    } border-b border-gray-200 hover:bg-gray-100`}
+                  >
+                    <td className="py-3 px-4 whitespace-normal break-words">
+                      <input
+                        type="text"
+                        value={item.sponsorName}
+                        onChange={(e) => handleChange(item.id, 'sponsorName', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                      />
+                    </td>
+                    <td className="py-3 px-4 whitespace-normal break-words"> {/* New column content */}
+                      <textarea
+                        value={item.supportType}
+                        onChange={(e) => handleChange(item.id, 'supportType', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 resize-y"
+                        rows="2"
+                        placeholder="เช่น เครื่องดื่ม, ของที่ระลึก"
+                      />
+                    </td>
+                    <td className="py-3 px-4">
+                      <input
+                        type="number"
+                        value={item.actualPrice}
+                        onChange={(e) => handleChange(item.id, 'actualPrice', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                      />
+                    </td>
+                    <td className="py-3 px-4 whitespace-normal break-words">
+                      <input
+                        type="text"
+                        value={item.responsiblePerson}
+                        onChange={(e) => handleChange(item.id, 'responsiblePerson', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                      />
+                    </td>
+                    <td className="py-3 px-4 flex items-center space-x-2">
+                      <textarea
+                        value={item.notes}
+                        onChange={(e) => handleChange(item.id, 'notes', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 resize-y"
+                        rows="2"
+                        placeholder="รายละเอียดเพิ่มเติม"
+                      />
+                      <button
+                        onClick={() => deleteItem(item.id)}
+                        className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition-colors shrink-0"
+                        title="ลบรายการ"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                <tr>
+                  <td colSpan="5" className="py-3 px-4 text-center">
+                    <button
+                      onClick={addSponsorItem}
+                      className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition-colors"
+                    >
+                      + เพิ่มผู้สนับสนุน
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p className="mt-8 text-center text-sm text-gray-500">
+          * โปรดระบุราคาในช่อง "ราคาที่ตั้งไว้" และ "ราคาที่จ่ายจริง" เพื่อให้ระบบคำนวณยอดรวมและยอดคงเหลือ
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default App;
